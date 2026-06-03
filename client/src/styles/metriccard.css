@@ -1,0 +1,27 @@
+.metric-card {
+  flex: 1;
+
+  min-width: 220px;
+
+  padding: 25px;
+
+  border-radius: 20px;
+
+  background: rgba(255,255,255,0.05);
+
+  border: 1px solid rgba(255,255,255,0.08);
+
+  backdrop-filter: blur(10px);
+}
+
+.metric-card h3 {
+  color: #9ca3af;
+
+  margin-bottom: 15px;
+
+  font-size: 1rem;
+}
+
+.metric-card h1 {
+  font-size: 2.5rem;
+}
