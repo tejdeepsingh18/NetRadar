@@ -1,19 +1,14 @@
 import axios from "axios";
 
-const API=
-
-"http://localhost:5000/api/analytics";
+const API =
+`${import.meta.env.VITE_API_URL}/api/analytics`;
 
 export async function getAnalytics(
-
 radius
-
 ){
 
-const position=
-
+const position =
 await new Promise(
-
 (resolve,reject)=>{
 
 navigator
@@ -30,16 +25,13 @@ reject
 
 );
 
-const lat=
-
+const lat =
 position.coords.latitude;
 
-const lng=
-
+const lng =
 position.coords.longitude;
 
-const res=
-
+const res =
 await axios.post(
 
 API,

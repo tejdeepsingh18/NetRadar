@@ -1,9 +1,9 @@
 import axios from "axios";
 
-const API=
-"http://localhost:5000/api/search";
+const API =
+`${import.meta.env.VITE_API_URL}/api/search`;
 
-export const getNearbyStats=
+export const getNearbyStats =
 
 async(
 

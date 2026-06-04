@@ -2,7 +2,7 @@ import axios from "axios";
 
 const API=
 
-"http://localhost:5000/api/recommend";
+`${import.meta.env.VITE_API_URL}/api/recommend`;
 
 export async function getRecommendations(
 

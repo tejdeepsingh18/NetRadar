@@ -2,7 +2,7 @@ import axios from "axios";
 
 const API=
 
-"http://localhost:5000/api/speed";
+`${import.meta.env.VITE_API_URL}/api/speed`;
 
 function getDeviceId(){
 
