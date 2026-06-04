@@ -34,7 +34,20 @@ express();
 connectDB();
 
 app.use(
-cors()
+cors({
+origin:[
+"https://net-radar.vercel.app",
+"https://net-radar-48qy651ih-tejdeepsingh18s-projects.vercel.app",
+"http://localhost:5173"
+],
+methods:[
+"GET",
+"POST",
+"PUT",
+"DELETE"
+],
+credentials:true
+})
 );
 
 app.use(
