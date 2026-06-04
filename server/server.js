@@ -1,48 +1,31 @@
 const express = require("express");
-
 const cors = require("cors");
 
 require("dotenv").config();
 
-const connectDB =
-require("./config/db");
+const connectDB = require("./config/db");
 
-const speedRoutes =
-require("./routes/speedTestRoutes");
+const speedRoutes = require("./routes/speedTestRoutes");
+const searchRoutes = require("./routes/searchRoutes");
+const historyRoutes = require("./routes/historyRoutes");
+const analyticsRoutes = require("./routes/statsRoutes");
+const mapRoutes = require("./routes/mapRoutes");
+const filterRoutes = require("./routes/filterRoutes");
+const recommendRoutes = require("./routes/recommendRoutes");
 
-const searchRoutes =
-require("./routes/searchRoutes");
-
-const historyRoutes =
-require("./routes/historyRoutes");
-
-const analyticsRoutes =
-require("./routes/statsRoutes");
-
-const mapRoutes =
-require("./routes/mapRoutes");
-
-const filterRoutes =
-require("./routes/filterRoutes");
-
-const recommendRoutes =
-require("./routes/recommendRoutes");
-
-const app =
-express();
+const app = express();
 
 connectDB();
 
 app.use(
 cors({
-origin:true,
-credentials:true
+origin: "*",
+methods: ["GET", "POST", "PUT", "DELETE"],
+credentials: false
 })
 );
 
-app.use(
-express.json()
-);
+app.use(express.json());
 
 app.use(
 "/api/speed",
@@ -60,7 +43,7 @@ historyRoutes
 );
 
 app.use(
-"/api/stats",
+"/api/analytics",
 analyticsRoutes
 );
 
@@ -80,41 +63,24 @@ recommendRoutes
 );
 
 app.get(
-
 "/",
-
 (req,res)=>{
-
 res.send(
-
 "NetRadar API Running"
-
 );
-
 }
-
 );
 
 const PORT =
-
 process.env.PORT
-
 ||
-
 5000;
 
 app.listen(
-
 PORT,
-
 ()=>{
-
 console.log(
-
 `Server running on ${PORT}`
-
 );
-
 }
-
 );
