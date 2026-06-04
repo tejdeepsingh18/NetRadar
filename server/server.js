@@ -60,7 +60,7 @@ historyRoutes
 );
 
 app.use(
-"/api/analytics",
+"/api/stats",
 analyticsRoutes
 );
 
