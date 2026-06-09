@@ -1,208 +1,84 @@
 import axios from "axios";
 import SpeedTest from "@cloudflare/speedtest";
 
-const API =
-`${import.meta.env.VITE_API_URL}/api/speed`;
+const API = `${import.meta.env.VITE_API_URL}/api/speed`;
 
-function getDeviceId(){
+function getDeviceId() {
+  let id = localStorage.getItem("deviceId");
 
-let id =
+  if (!id) {
+    id = crypto.randomUUID();
+    localStorage.setItem("deviceId", id);
+  }
 
-localStorage.getItem(
-
-"deviceId"
-
-);
-
-if(!id){
-
-id =
-
-crypto.randomUUID();
-
-localStorage.setItem(
-
-"deviceId",
-
-id
-
-);
-
+  return id;
 }
 
-return id;
-
-}
-
-export const getMyDeviceId =
-
-()=>{
-
-return getDeviceId();
-
+export const getMyDeviceId = () => {
+  return getDeviceId();
 };
 
-export const runSpeedTest =
+export const runSpeedTest = async () => {
+  const position = await new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(resolve, reject);
+  });
 
-async()=>{
+  const lat = position.coords.latitude;
+  const lng = position.coords.longitude;
 
-console.log("runSpeedTest started");
+  const results = await new Promise((resolve, reject) => {
+    const test = new SpeedTest({
+      measurements: [
+        {
+          type: "latency",
+          numPackets: 20,
+        },
+        {
+          type: "download",
+          bytes: 1e6,
+          count: 8,
+        },
+        {
+          type: "upload",
+          bytes: 1e6,
+          count: 8,
+        },
+      ],
+    });
 
-const position =
+    test.onFinish = (r) => {
+      resolve(r.getSummary());
+    };
 
-await new Promise(
+    test.onError = (e) => {
+      console.error("Cloudflare Speed Test Error:", e);
+      reject(e);
+    };
+  });
 
-(resolve,reject)=>{
+  const download = Number(
+    ((results.download || 0) / 1000000).toFixed(2)
+  );
 
-navigator
-.geolocation
-.getCurrentPosition(
+  const upload = Number(
+    ((results.upload || 0) / 1000000).toFixed(2)
+  );
 
-resolve,
+  const ping = Number(
+    (results.latency || 0).toFixed(2)
+  );
 
-reject
+  const response = await axios.post(
+    `${API}/start`,
+    {
+      lat,
+      lng,
+      download,
+      upload,
+      ping,
+      deviceId: getDeviceId(),
+    }
+  );
 
-);
-
-}
-
-);
-
-const lat =
-
-position.coords.latitude;
-
-const lng =
-
-position.coords.longitude;
-
-console.log(
-"Location acquired",
-lat,
-lng
-);
-
-const results =
-
-await new Promise(
-
-(resolve,reject)=>{
-
-const test = new SpeedTest({
-
-measurements:[
-
-{
-type:"latency",
-numPackets:20
-},
-
-{
-type:"download",
-bytes:1e6,
-count:8
-},
-
-{
-type:"upload",
-bytes:1e6,
-count:8
-}
-
-]
-
-});
-
-test.onFinish = (r)=>{
-
-const summary =
-
-r.getSummary();
-
-console.log(
-"CLOUDFLARE RESULTS:",
-summary
-);
-
-resolve(
-summary
-);
-
-};
-
-test.onError = (e)=>{
-
-console.error(
-"CLOUDFLARE ERROR:",
-e
-);
-
-reject(e);
-
-};
-
-}
-
-);
-
-console.log(
-"Final Results:",
-results
-);
-
-const download =
-
-Number(
-(
-results.download /
-1000000
-).toFixed(2)
-);
-
-const upload =
-
-Number(
-(
-results.upload /
-1000000
-).toFixed(2)
-);
-
-const ping =
-
-Number(
-results.latency
-?.toFixed?.(2)
-||
-0
-);
-
-const response =
-
-await axios.post(
-
-`${API}/start`,
-
-{
-
-lat,
-
-lng,
-
-download,
-
-upload,
-
-ping,
-
-deviceId:
-
-getDeviceId()
-
-}
-
-);
-
-return response.data;
-
+  return response.data;
 };
