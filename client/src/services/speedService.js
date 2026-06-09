@@ -1,7 +1,7 @@
 import axios from "axios";
+import SpeedTest from "@cloudflare/speedtest";
 
-const API=
-
+const API =
 `${import.meta.env.VITE_API_URL}/api/speed`;
 
 function getDeviceId(){
@@ -46,6 +46,8 @@ export const runSpeedTest=
 
 async()=>{
 
+alert("runSpeedTest started");
+
 const position=
 
 await new Promise(
@@ -74,7 +76,41 @@ const lng=
 
 position.coords.longitude;
 
-/* keep your existing measurement logic here */
+alert(`Location acquired: ${lat}, ${lng}`);
+
+const test = new SpeedTest();
+
+const results = await new Promise(
+
+(resolve,reject)=>{
+
+test.onFinish=(r)=>{
+
+console.log("CLOUDFLARE RESULTS:", r.getSummary());
+
+alert("Cloudflare test finished");
+
+resolve(
+r.getSummary()
+);
+
+};
+
+test.onError=(e)=>{
+
+console.error("CLOUDFLARE ERROR:", e);
+
+alert(`Cloudflare Error: ${e}`);
+
+reject(e);
+
+};
+
+}
+
+);
+
+console.log("Final Results:", results);
 
 const download=40;
 

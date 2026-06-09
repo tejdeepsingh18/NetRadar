@@ -74,6 +74,8 @@ setLoading
 
 async function start(){
 
+alert("START BUTTON CLICKED");
+
 setLoading(true);
 
 const data=
