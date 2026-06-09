@@ -1,8 +1,7 @@
 import axios from "axios";
 
 const API =
-`${import.meta.env.VITE_API_URL}/api/analytics`;
-
+`${import.meta.env.VITE_API_URL}/api/stats`;
 export async function getAnalytics(
 radius
 ){
