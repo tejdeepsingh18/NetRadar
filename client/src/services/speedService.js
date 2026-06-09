@@ -6,7 +6,7 @@ const API =
 
 function getDeviceId(){
 
-let id=
+let id =
 
 localStorage.getItem(
 
@@ -16,7 +16,7 @@ localStorage.getItem(
 
 if(!id){
 
-id=
+id =
 
 crypto.randomUUID();
 
@@ -34,7 +34,7 @@ return id;
 
 }
 
-export const getMyDeviceId=
+export const getMyDeviceId =
 
 ()=>{
 
@@ -42,13 +42,13 @@ return getDeviceId();
 
 };
 
-export const runSpeedTest=
+export const runSpeedTest =
 
 async()=>{
 
-alert("runSpeedTest started");
+console.log("runSpeedTest started");
 
-const position=
+const position =
 
 await new Promise(
 
@@ -62,45 +62,80 @@ resolve,
 
 reject
 
-)
+);
 
 }
 
 );
 
-const lat=
+const lat =
 
 position.coords.latitude;
 
-const lng=
+const lng =
 
 position.coords.longitude;
 
-alert(`Location acquired: ${lat}, ${lng}`);
+console.log(
+"Location acquired",
+lat,
+lng
+);
 
-const test = new SpeedTest();
+const results =
 
-const results = await new Promise(
+await new Promise(
 
 (resolve,reject)=>{
 
-test.onFinish=(r)=>{
+const test = new SpeedTest({
 
-console.log("CLOUDFLARE RESULTS:", r.getSummary());
+measurements:[
 
-alert("Cloudflare test finished");
+{
+type:"latency",
+numPackets:20
+},
+
+{
+type:"download",
+bytes:1e6,
+count:8
+},
+
+{
+type:"upload",
+bytes:1e6,
+count:8
+}
+
+]
+
+});
+
+test.onFinish = (r)=>{
+
+const summary =
+
+r.getSummary();
+
+console.log(
+"CLOUDFLARE RESULTS:",
+summary
+);
 
 resolve(
-r.getSummary()
+summary
 );
 
 };
 
-test.onError=(e)=>{
+test.onError = (e)=>{
 
-console.error("CLOUDFLARE ERROR:", e);
-
-alert(`Cloudflare Error: ${e}`);
+console.error(
+"CLOUDFLARE ERROR:",
+e
+);
 
 reject(e);
 
@@ -110,15 +145,39 @@ reject(e);
 
 );
 
-console.log("Final Results:", results);
+console.log(
+"Final Results:",
+results
+);
 
-const download=40;
+const download =
 
-const upload=20;
+Number(
+(
+results.download /
+1000000
+).toFixed(2)
+);
 
-const ping=25;
+const upload =
 
-const response=
+Number(
+(
+results.upload /
+1000000
+).toFixed(2)
+);
+
+const ping =
+
+Number(
+results.latency
+?.toFixed?.(2)
+||
+0
+);
+
+const response =
 
 await axios.post(
 
